@@ -1,6 +1,10 @@
 #include <iostream>
 #include <arpa/inet.h>
-#include "xpkt.h"
+#include "filter.h"
+#include "utils.h"
+#include "agent.h"
+#include "ether.h"
+#include "arp.h"
 
 void usage(){
     std::cout << "Usage: ./send_arp <interface> <sender ip> <target ip>" << std::endl;
@@ -16,18 +20,19 @@ int main(int argc, char *argv[]){
     char *interface = argv[1];
     char *sender_str = argv[2];
     char *target_str = argv[3];
-    int sender;
-    int target;
-    Xpkt xpkt = Xpkt(buf1,3);
-    Xpkt xpkt2 = Xpkt(buf2,2);
-    Xpkt xpkt3;
+    pktbyte sender[4];
+    pktbyte sender_mac[ETH_ALEN];
+    pktbyte target[4];
+    pktbyte target_mac[ETH_ALEN];
+    Agent attacker = Agent(interface);
+    Xpkt xpkt = Xpkt();
 
-    if(!inet_pton(AF_INET, sender_str, &sender)){
+    if(!inet_pton(AF_INET, sender_str, sender)){
         std::cerr << "[X]Error: sender IP is improper.";
         return -1;
     }
 
-    if(!inet_pton(AF_INET, target_str, &target)){
+    if(!inet_pton(AF_INET, target_str, target)){
         std::cerr << "[X]Error: target IP is imporoper.";
         return -1;
     }
@@ -36,8 +41,7 @@ int main(int argc, char *argv[]){
     std::cout << "Sender IP: " << sender_str << std::endl;
     std::cout << "Target IP: " << target_str << std::endl;
 
-    xpkt3 = xpkt+xpkt2;
-    
-    std::cout << xpkt3.get_buf();
-
+    if(attacker.arp_spoof(interface, sender, target)){
+        std::cout << "Spoofing success" << std::endl;
+    }
 }

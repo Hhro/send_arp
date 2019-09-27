@@ -2,15 +2,31 @@
 
 #include <cstring>
 #include <cstdint>
+#include <linux/types.h>
+#include <arpa/inet.h>
+#include "xpkt.h"
 
-#define ETH_ALEN    6
+#define ETH_ALEN	6		/* Octets in one ethernet addr	 */
+#define ETH_HLEN	14		/* Total octets in header.	 */
 
-class Ethernet{
+#define ETH_P_IP	0x0800		/* Internet Protocol packet	*/
+#define ETH_P_ARP	0x0806		/* Address Resolution packet	*/
+
+#define ETHERNET_(pkt)      (reinterpret_cast<struct ethhdr*>(pkt))    
+
+struct ethhdr {
+	unsigned char	h_dest[ETH_ALEN];	/* destination eth addr	*/
+	unsigned char	h_source[ETH_ALEN];	/* source ether addr	*/
+	__be16		h_proto;		/* packet type ID field	*/
+} __attribute__((packed));
+
+class Ether : public Xpkt{
     private:
-        uint8_t h_dest[ETH_ALEN];
-        uint8_t hsource[ETH_ALEN];
-        uint16_t  h_proto;
+        pktbyte h_dest[ETH_ALEN];
+        pktbyte h_source[ETH_ALEN];
+        pktword h_proto;
 
     public:
-        Ethernet(uint8_t *dst, uint8_t *src, uint8_t *proto);
+        Ether(pktbyte *dst, pktbyte *src, pktword proto);
+        pktword get_proto();
 };

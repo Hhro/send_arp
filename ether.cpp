@@ -1,7 +1,15 @@
 #include "ether.h"
 
-Ethernet::Ethernet(uint8_t *dst, uint8_t *src, uint8_t *proto){
-    memcpy(h_dest,dst,ETH_ALEN);
-    memcpy(hsource,src,ETH_ALEN);
-    h_proto=proto;
+Ether::Ether(pktbyte *dst, pktbyte *src, pktword proto) : Xpkt(){
+    memcpy(h_dest, dst, ETH_ALEN);
+    memcpy(h_source, src, ETH_ALEN);
+    h_proto = htons(proto);
+
+    Ether::append(h_dest, ETH_ALEN);
+    Ether::append(h_source, ETH_ALEN);
+    Ether::append(WPTR_TO_BPTR(&h_proto), 2);
+}
+
+pktword Ether::get_proto(){
+    return h_proto;
 }

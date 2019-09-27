@@ -3,19 +3,43 @@
 #include <iostream>
 #include <cstring>
 #include <cstdint>
+#include <unistd.h>
+#include <thread>
 #include <pcap.h>
+#include "arp.h"
 #include "ether.h"
+#include "utils.h"
+#include "filter.h"
+#include "xpkt.h"
 
 class Agent{
     private:
-        uint8_t mac[ETH_ALEN];
-        uint8_t IP[4];
+        char dev[0x100];        //Linux: max length of file name == 0xff
+        pktbyte mac[ETH_ALEN];
+        pktbyte IP[4];
     
     public:
-        Agent();
-        Agent(uint8_t *_mac, uint8_t *_IP);
-        void set_mac(uint8_t *_mac);
-        void set_IP(uint8_t *_IP);
-        int send(char *dev, uint8_t *pkt, int pkt_sz);
-        //void send_arp(uint8_t *dev, uint16_t sender, uint16_t target);
+        Agent(char *dev);
+
+        pktbyte* get_IP();
+        pktbyte* get_mac();
+
+        void show_info();
+
+        int send(char *dev, Xpkt *pkt);
+        void snatch(char *dev, Xpkt *pkt, bool (*filter)(pktbyte *pkt));
+
+        int arp_send_req(char *dev, pktbyte *target);
+        //int send_arp_repl(char *dev, pktbyte *target);
+        int arp_send_raw(
+            char *dev, 
+            pktword op, 
+            pktbyte *sha, 
+            pktbyte *sip, 
+            pktbyte *tha, 
+            pktbyte *tip
+        );
+        int arp_get_target_mac(char *dev, pktbyte *target, pktbyte *mac);
+        int arp_spoof(char *dev, pktbyte *sender, pktbyte *target);
+
 };
