@@ -1,10 +1,10 @@
 #include "arp.h"
 
-ARP::ARP(Xpkt xpkt) : Xpkt(xpkt){
-    ARP::dissect();
+Arp::Arp(Xpkt xpkt) : Xpkt(xpkt){
+    Arp::dissect();
 }
 
-ARP::ARP(pktword op, pktbyte *sha, pktbyte *sip, pktbyte *tha, pktbyte *tip){
+Arp::Arp(pktword_h op, pktbyte_h *sha, pktbyte_h *sip, pktbyte_h *tha, pktbyte_h *tip){
     ar_hrd = htons(ARPHRD_ETHER);  //Ethernet
     ar_pro = htons(ETH_P_IP);      //IPV4
     ar_hln = 6;
@@ -16,38 +16,38 @@ ARP::ARP(pktword op, pktbyte *sha, pktbyte *sip, pktbyte *tha, pktbyte *tip){
     memcpy(ar_tha, tha, ETH_ALEN);
     memcpy(ar_tip, tip, 4);
 
-    ARP::assemble();
+    Arp::assemble();
 }
 
-pktword ARP::get_pro(){
+pktword_n Arp::get_pro(){
     return ar_pro;
 }
 
-pktword ARP::get_op(){
+pktword_n Arp::get_op(){
     return ar_op;
 }
 
-pktbyte* ARP::get_sha(){
+pktbyte_n* Arp::get_sha(){
     return ar_sha;
 }
 
-pktbyte* ARP::get_tha(){
+pktbyte_n* Arp::get_tha(){
     return ar_tha;
 }
 
-void ARP::assemble(){
-    ARP::append(WPTR_TO_BPTR(&ar_hrd), WORD);
-    ARP::append(WPTR_TO_BPTR(&ar_pro), WORD);
-    ARP::append(&ar_hln, BYTE);
-    ARP::append(&ar_pln, BYTE);
-    ARP::append(WPTR_TO_BPTR(&ar_op), WORD);
-    ARP::append(ar_sha, ETH_ALEN);
-    ARP::append(ar_sip, 4);
-    ARP::append(ar_tha, ETH_ALEN);
-    ARP::append(ar_tip, 4);
+void Arp::assemble(){
+    Arp::append(WPTR_TO_BPTR(&ar_hrd), WORD);
+    Arp::append(WPTR_TO_BPTR(&ar_pro), WORD);
+    Arp::append(&ar_hln, BYTE);
+    Arp::append(&ar_pln, BYTE);
+    Arp::append(WPTR_TO_BPTR(&ar_op), WORD);
+    Arp::append(ar_sha, ETH_ALEN);
+    Arp::append(ar_sip, 4);
+    Arp::append(ar_tha, ETH_ALEN);
+    Arp::append(ar_tip, 4);
 }
 
-void ARP::dissect(){
+void Arp::dissect(){
     arphdr *arp = ARP_(pktbuf); 
     ar_hrd = arp->ar_hrd;
     ar_pro = arp->ar_pro;

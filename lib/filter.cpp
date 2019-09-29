@@ -1,6 +1,6 @@
 #include "filter.h"
 
-bool filter_IP(pktbyte *pkt){
+bool filter_ip(pktbyte_n *pkt){
     ethhdr *ethernet = ETHERNET_(pkt);
 
     if(ethernet->h_proto == htons(ETH_P_IP)){
@@ -10,7 +10,7 @@ bool filter_IP(pktbyte *pkt){
     return FAIL;
 }
 
-bool filter_ARP(pktbyte *pkt){
+bool filter_arp(pktbyte_n *pkt){
     ethhdr *ethernet = ETHERNET_(pkt);
 
     if(ethernet->h_proto == htons(ETH_P_ARP)){
@@ -20,7 +20,7 @@ bool filter_ARP(pktbyte *pkt){
     return FAIL;
 }
 
-bool filter_ARP_req(pktbyte *pkt){
+bool filter_arp_req(pktbyte_n *pkt){
     ethhdr *ethernet = ETHERNET_(pkt);
 
     if(ethernet->h_proto != htons(ETH_P_ARP))
@@ -34,7 +34,7 @@ bool filter_ARP_req(pktbyte *pkt){
     return FAIL;
 }
 
-bool filter_ARP_reply(pktbyte *pkt){
+bool filter_arp_reply(pktbyte_n *pkt){
     ethhdr *ethernet = ETHERNET_(pkt);
 
     if(ethernet->h_proto != htons(ETH_P_ARP))

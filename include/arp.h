@@ -36,25 +36,31 @@ struct arphdr {
 	unsigned char		ar_tip[4];		/* target IP address		*/
 };
 
-class ARP : public Xpkt{
+class Arp : public Xpkt{
     private:
-        pktword  ar_hrd;
-        pktword  ar_pro;
-        pktbyte  ar_hln;
-        pktbyte  ar_pln;
-        pktword  ar_op;
-        pktbyte  ar_sha[ETH_ALEN];
-        pktbyte  ar_sip[4];
-        pktbyte  ar_tha[ETH_ALEN];
-        pktbyte  ar_tip[4]; 
+        pktword_n  ar_hrd;
+        pktword_n  ar_pro;
+        pktbyte_n  ar_hln;
+        pktbyte_n  ar_pln;
+        pktword_n  ar_op;
+        pktbyte_n  ar_sha[ETH_ALEN];
+        pktbyte_n  ar_sip[4];
+        pktbyte_n  ar_tha[ETH_ALEN];
+        pktbyte_n  ar_tip[4]; 
 
     public:
-        ARP(Xpkt xpkt);
-        ARP(pktword op, pktbyte *sha, pktbyte *sip, pktbyte *tha, pktbyte *tip);
-        pktword get_pro();
-        pktword get_op();
-        pktbyte* get_sha();
-        pktbyte* get_tha();
+        Arp(Xpkt xpkt);
+        Arp(
+            pktword_h op, 
+            pktbyte_n *sha, 
+            pktbyte_n *sip, 
+            pktbyte_n *tha, 
+            pktbyte_n *tip
+        );
+        pktword_n get_pro();
+        pktword_n get_op();
+        pktbyte_n* get_sha();
+        pktbyte_n* get_tha();
         void assemble();
         void dissect();
 };

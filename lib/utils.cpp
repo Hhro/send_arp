@@ -3,7 +3,7 @@
 /*
 http://community.onion.io/topic/2441/obtain-the-mac-address-in-c-code/2
 */
-void get_dev_info(char *dev, pktbyte *mac, pktbyte *IP)
+void get_dev_info(char *dev, pktbyte_n *mac, pktbyte_n *ip)
 {
     int s;
     struct ifreq ifr;
@@ -14,14 +14,16 @@ void get_dev_info(char *dev, pktbyte *mac, pktbyte *IP)
     memcpy(mac, ifr.ifr_hwaddr.sa_data, ETH_ALEN);
 
     ioctl(s, SIOCGIFADDR, &ifr);
-    memcpy(IP, ifr.ifr_addr.sa_data + 2, 4);
+    memcpy(ip, ifr.ifr_addr.sa_data + 2, 4);
 }
 
-void print_mac(pktbyte *mac, const char *prefix){
+void print_mac(pktbyte_n *mac, const char *prefix){
     if(prefix){
         std::cout << prefix;
     }
     std::cout << "MAC: ";
+
+    std::ios_base::fmtflags f( std::cout.flags() );
 
     for(int i=0; i < ETH_ALEN; i++){
         std::cout 
@@ -35,9 +37,11 @@ void print_mac(pktbyte *mac, const char *prefix){
         }
     }
     std::cout << std::endl;
+
+    std::cout.flags(f);
 }
 
-void parse_mac(pktbyte *mac, char *mac_str){
+void parse_mac(pktbyte_n *mac, char *mac_str){
     for(int i=0; i< ETH_ALEN; i++){
         sprintf(mac_str+3*i, "%02X", mac[i]);
 
@@ -46,13 +50,22 @@ void parse_mac(pktbyte *mac, char *mac_str){
     }
 }
 
-void print_IP(pktbyte *IP, const char *prefix){
-    char IP_str[20];
+void print_ip(pktbyte_n *ip, const char *prefix){
+    char ip_str[20];
 
     if(prefix){
         std::cout << prefix;
     }
 
-    inet_ntop(AF_INET, IP, IP_str, sizeof(IP_str));
-    std::cout << "IP: " << IP_str;
+    inet_ntop(AF_INET, ip, ip_str, sizeof(ip_str));
+    std::cout << "IP: " << ip_str;
+}
+
+void parse_ip(pktbyte_n *ip, char *ip_str){
+    const char *res = inet_ntop(AF_INET, ip, ip_str, sizeof(ip_str));
+
+    if(res == NULL){
+        std::cerr << "IP is invalid" << std::endl;
+        exit(-1);
+    }
 }

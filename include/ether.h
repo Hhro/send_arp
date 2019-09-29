@@ -22,11 +22,11 @@ struct ethhdr {
 
 class Ether : public Xpkt{
     private:
-        pktbyte h_dest[ETH_ALEN];
-        pktbyte h_source[ETH_ALEN];
-        pktword h_proto;
+        pktbyte_n h_dest[ETH_ALEN];
+        pktbyte_n h_source[ETH_ALEN];
+        pktword_n h_proto;
 
     public:
-        Ether(pktbyte *dst, pktbyte *src, pktword proto);
-        pktword get_proto();
+        Ether(pktbyte_n *dst, pktbyte_n *src, pktword_h proto);
+        pktword_n get_proto();
 };

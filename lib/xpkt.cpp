@@ -1,32 +1,26 @@
 #include "xpkt.h"
 
 Xpkt::Xpkt(){
-    pktbuf = (pktbyte *)malloc(sizeof(pktbyte)*INIT_SIZE);
+    pktbuf = (pktbyte_n *)malloc(sizeof(pktbyte_n)*INIT_SIZE);
     memset(pktbuf, 0, INIT_SIZE);
 
     len = 0;
     capacity = INIT_SIZE;
 }
 
-Xpkt::Xpkt(const Xpkt& xpkt){
-    pktbuf = (pktbyte *)malloc(xpkt.capacity);
-
-    memset(pktbuf, 0, capacity);
-    memcpy(pktbuf, xpkt.pktbuf, xpkt.len);
-
-    capacity = xpkt.capacity;
-    len = xpkt.len;
+Xpkt::Xpkt(const Xpkt& xpkt) : Xpkt(){
+    Xpkt::set_pktbuf(xpkt.pktbuf, xpkt.len);
 }
 
-Xpkt::Xpkt(pktbyte *_pktbuf, int _len) : Xpkt(){
-    Xpkt::set_pktbuf(_pktbuf,_len);
+Xpkt::Xpkt(pktbyte_n *_pktbuf, int _len) : Xpkt(){
+    Xpkt::set_pktbuf(_pktbuf, _len);
 }
 
 Xpkt::~Xpkt(){
     free(pktbuf);
 }
 
-pktbyte* Xpkt::get_pktbuf(){
+pktbyte_n* Xpkt::get_pktbuf(){
     return pktbuf;
 }
 
@@ -42,11 +36,12 @@ int Xpkt::get_capacity(){
     Name: set_pktbuf
     Type: method
     Args: 
-        pktbyte *data: data to fill
+        pktbyte_n *data: data to fill
         int size: size of data (EXCEPT null terminator)
-    Description: Nullify pktbuf and fill with data
+    Description: 
+        Nullify pktbuf and fill with data
 */
-void Xpkt::set_pktbuf(pktbyte *data, int size){
+void Xpkt::set_pktbuf(pktbyte_n *data, int size){
     int _capacity;
 
     if(size >= capacity)   
@@ -62,17 +57,18 @@ void Xpkt::set_pktbuf(pktbyte *data, int size){
     Type: method
     Args:
         int more: required size
-    Description: Expand pktbuf
+    Description: 
+        Expand pktbuf
 */
 void Xpkt::expand(int more){
     int _capacity;
 
     _capacity = INIT_SIZE * ((len + more) / INIT_SIZE + 1);
-    pktbuf = (pktbyte *)realloc(pktbuf, _capacity);
+    pktbuf = (pktbyte_n *)realloc(pktbuf, _capacity);
     capacity = _capacity;
 }
 
-void Xpkt::append(pktbyte *data, int size){
+void Xpkt::append(pktbyte_n *data, int size){
     int _capacity;
 
     if(len + size >= capacity)
@@ -99,9 +95,8 @@ void Xpkt::hexdump(int max_len){
 
 Xpkt Xpkt::operator / (Xpkt &p){
     int _len = len + p.get_len();
-    pktbyte *_pktbuf = (pktbyte *)malloc(sizeof(pktbyte) * (_len + 1));
-
-    memset(_pktbuf, 0, _len);
+    pktbyte_n *_pktbuf = (pktbyte_n *)malloc(sizeof(pktbyte_n) * (_len + 1));
+    memset(_pktbuf, 0, _len+1);
     
     memcpy(_pktbuf, pktbuf, len);
     memcpy(_pktbuf + len, p.pktbuf, p.len);
